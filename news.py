@@ -1,4 +1,7 @@
+import datetime
+import json
 import textwrap
+from typing import Union
 
 from newsapi import NewsApiClient
 
@@ -24,6 +27,29 @@ class NewsSearch:
         )
         self.print_news(news=top_headlines)
 
+    def get_all_news(
+            self, q: str = None, qintitle: str = None, sources: str = None,
+            language: str = "en",
+            from_date: Union[datetime.datetime, datetime.date, int, float] = None,
+            to_date: Union[datetime.datetime, datetime.date, int, float] = None,
+            page_no: int = 1, sort_by: str = None
+    ):
+        news = self.news_api.get_everything(
+            q=q, qintitle=qintitle, sources=sources,
+            language=language, from_param=from_date, to=to_date,
+            sort_by=sort_by, page=page_no, page_size=30
+        )
+        self.print_news(news=news)
+
+    def get_sources(
+            self, category: str = None,
+            language: str = "en", country: str = None
+    ):
+        sources = self.news_api.get_sources(
+            category=category, language=language, country=country
+        )
+        self.print_sources(sources=sources["sources"])
+
     @property
     def api_key(self):
         from get_api_key import get_api_key
@@ -31,15 +57,22 @@ class NewsSearch:
 
     def print_news(self, news):
         print("Total Results Found: {}".format(news["totalResults"]))
-
+        print(json.dumps(news, indent=4))
         for news_item in news["articles"]:
             self._print_decoration()
             self._print_title(news_item)
             self._print_description(news_item)
             self._print_content(news_item)
             self._print_url(news_item)
+            self._print_datetime(news_item)
             self._print_decoration()
             self._print_new_line()
+
+    def print_sources(self, sources):
+        for source in sources:
+            self._print_decoration()
+            self._print_name(name=source.get("name"))
+            self._print_decoration()
 
     @staticmethod
     def _print_url(news_item):
@@ -90,7 +123,16 @@ class NewsSearch:
     def _print_new_line():
         print()
 
+    @staticmethod
+    def _print_datetime(news_item):
+        if news_item.get("publishedAt"):
+            published_at = news_item["publishedAt"]
+            print("| {}{:>150}{:>} ".format(Colors.WHITE, published_at, Colors.ENDC))
+
+    def _print_name(self, name):
+        pass
+
 
 if __name__ == "__main__":
     news = NewsSearch()
-    news.get_top_headlines()
+    news.get_sources()
