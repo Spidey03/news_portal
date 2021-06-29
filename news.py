@@ -2,7 +2,7 @@ import collections
 import datetime
 import json
 import textwrap
-from typing import Union, List
+from typing import Union, List, Dict
 
 from newsapi import NewsApiClient
 
@@ -26,7 +26,7 @@ class NewsSearch:
             language=language, country=country, category=category,
             page=page_no, page_size=20
         )
-        self.print_news(news=top_headlines)
+        self.print_news(news=top_headlines, page_no=page_no)
 
     def get_all_news(
             self, q: str = None, qintitle: str = None, sources: str = None,
@@ -35,12 +35,15 @@ class NewsSearch:
             to_date: Union[datetime.datetime, datetime.date, int, float] = None,
             page_no: int = 1, sort_by: str = None
     ):
+        if not q:
+            print("{} Please enter search phrase {}".format(Colors.RED, Colors.ENDC))
+            q = input()
         news = self.news_api.get_everything(
             q=q, qintitle=qintitle, sources=sources,
             language=language, from_param=from_date, to=to_date,
             sort_by=sort_by, page=page_no, page_size=30
         )
-        self.print_news(news=news)
+        self.print_news(news=news, page_no=page_no)
 
     def get_sources(
             self, category: str = None,
@@ -60,8 +63,9 @@ class NewsSearch:
         from get_api_key import get_api_key
         return get_api_key()
 
-    def print_news(self, news):
+    def print_news(self, news: Dict, page_no: int):
         print("Total Results Found: {}".format(news["totalResults"]))
+        print("Showing: {} in page {}".format(len(news["articles"]), page_no))
         # print(json.dumps(news, indent=4))
         for news_item in news["articles"]:
             self._print_decoration()

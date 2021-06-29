@@ -14,3 +14,4 @@ class Colors:
     MAGENTA = '\033[35m'
     CYAN = '\033[36m'
     WHITE = '\033[37m'
+    RED = '\033[91m'
