@@ -18,8 +18,9 @@ class NewsSearch:
 
     def get_top_headlines(
             self, q: str = None, qintitle: str = None, sources: str = None,
-            language: str = "en", country: str = "in", category: str = None,
+            language: str = None, country: str = None, category: str = None,
             page_no: int = 1
+
     ):
         top_headlines = self.news_api.get_top_headlines(
             q=q, qintitle=qintitle, sources=sources,
@@ -53,7 +54,7 @@ class NewsSearch:
         sources = self.news_api.get_sources(
             category=category, language=language, country=country
         )
-        self.print_sources(
+        return self.print_sources(
             sources=sources["sources"],
             enable_description=enable_description
         )
@@ -78,7 +79,7 @@ class NewsSearch:
             self._print_new_line()
 
     def print_sources(self, sources: List, enable_description: bool):
-        print("Total Sources are: {}", len(sources))
+        print("Total Sources are: {}".format(len(sources)))
         source_map = collections.defaultdict()
         counter = 1
         for source in sources:
@@ -89,7 +90,7 @@ class NewsSearch:
             else:
                 self._print_new_line()
             counter += 1
-        # print(json.dumps(sources, indent=4))
+        # print(json.dumps(source_map, indent=4))
         return source_map
 
     @staticmethod

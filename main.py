@@ -91,7 +91,12 @@ while True:
         _cmd = commands.get(cmd)
 
     if _cmd:
-        _cmd()
+        sources = _cmd()
+        if _cmd.__name__ == "get_sources":
+            print("Enter Source Number: ", end="")
+            source_id = input()
+            print(sources.get(source_id))
+            news.get_top_headlines(sources=sources.get(source_id)["name"])
     elif cmd == "":
         print("")
     else:
