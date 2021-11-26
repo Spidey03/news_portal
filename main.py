@@ -1,7 +1,12 @@
 import argparse
 import sys
 
-import gnureadline as gnureadline
+is_windows = False
+try:
+    import gnureadline
+except:
+    is_windows = True
+    import pyreadline
 
 from config.color_codes import Colors
 from news import NewsSearch
@@ -48,8 +53,12 @@ def reset_page_no():
     page_no = 1
 
 
-gnureadline.parse_and_bind('tab: complete')
-gnureadline.set_completer(completer)
+if is_windows:
+    pyreadline.Readline().parse_and_bind("tab: complete")
+    pyreadline.Readline().set_completer(completer)
+else:
+    gnureadline.parse_and_bind('tab: complete')
+    gnureadline.set_completer(completer)
 
 parser = argparse.ArgumentParser(description="")
 parser.add_argument('-c', '--command', help='run in single command mode & execute provided command', action='store')
@@ -80,8 +89,12 @@ while True:
     else:
         reset_page_no()
 
-    gnureadline.parse_and_bind("tab: complete")
-    gnureadline.set_completer(completer)
+    if is_windows:
+        pyreadline.Readline().parse_and_bind("tab: complete")
+        pyreadline.Readline().set_completer(completer)
+    else:
+        gnureadline.parse_and_bind('tab: complete')
+        gnureadline.set_completer(completer)
     if args.command:
         cmd = args.command
         _cmd = commands.get(cmd)
